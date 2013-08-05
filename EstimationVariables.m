@@ -19,14 +19,14 @@
 
 % Image names and handling
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~`
-if ((min(MVI(:,1))==max(MVI(:,1))) && (min(MVI(:,2))==max(MVI(:,2))))
+if ((min(MVI(:,1))==max(MVI(:,1))) && (min(MVI(:,2))==max(MVI(:,2))) && (min(MVI(:,3))==max(MVI(:,3))))
     Parameter_varying=0; % Initialse parameter m, If m = 1 parameter uncertainty increases to account for the fact that the parameters vary in time. m is always set to zero, and is adjusted in the code accordingly
     simulation_initial_name = [Estimation_Type,'f',int2str(SimulationSettings.fs),...
-        'A,B',int2str(MVI(1,1)),',',int2str(MVI(1,2)),'S',num2str(SimulationSettings.stochastic)]; % Initaite name for simulation, used for saving purposes
+        'A,B,G',int2str(MVI(1,1)),',',int2str(MVI(1,2)),',',int2str(MVI(1,3)),'S',num2str(SimulationSettings.stochastic)]; % Initaite name for simulation, used for saving purposes
 else
     Parameter_varying=1;
-    simulation_initial_name = [Estimation_Type,'Vf',int2str(SimulationSettings.fs),...
-          'A,B',int2str(MVI(1,1)),',',int2str(MVI(1,2)),'S',num2str(SimulationSettings.stochastic)];  % Initaite name for simulation, used for saving purposes
+    simulation_initial_name = [Estimation_Type,'V_f=',int2str(SimulationSettings.fs),...
+        'A,B,G',int2str(MVI(1,1)),',',int2str(MVI(1,2)),',',int2str(MVI(1,3)),'S',num2str(SimulationSettings.stochastic)]; % Initaite name for simulation, used for saving purposes
 end
 
 sampling_frequency =SimulationSettings.fs;
@@ -64,7 +64,7 @@ Input_mean = (frequency_limits(2)+frequency_limits(1))/2; % Mean input frequency
 % Simulated Signal Data mV
 % ~~~~~~~~~~~~~~~~~~
 EstStart_Sample = floor(EstStart*sampling_frequency);
-check = output6(EstStart_Sample:end); % Assign a new variable as the simulated output, data point form time EstStart are used as the beginning of the observations
+check = output(EstStart_Sample:end); % Assign a new variable as the simulated output, data point form time EstStart are used as the beginning of the observations
 Y = check + randn(length(check),1)*NoiseIn; % Initalise noise on the simulated signal
 Number_of_observations = length(Y); % Parameter that defines he number of observations from the simulation
 

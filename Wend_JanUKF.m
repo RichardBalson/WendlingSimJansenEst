@@ -63,27 +63,24 @@ Max_A =10;
 Min_A =0;
 Max_B =40;
 Min_B =0;
-Max_G =40;
-Min_G =0;
 
-Max = [Max_A, Max_B, Max_G];
-Min = [Min_A, Min_B, Min_G];
+Max = [Max_A, Max_B];
+Min = [Min_A, Min_B];
 
-min_frequency = 30; % Minimum noise firing rate
+min_frequency = 120; % Minimum noise firing rate
 
-max_frequency = 150; % Maximum noise input firing rate
+max_frequency = 320; % Maximum noise input firing rate
 
 frequency_limits = [min_frequency max_frequency];
 
 a =100;             %Excitatory time constant
 b =30;              %Slow inhibitory time constant original b=50
-g =350;             %Fast inhibitory time constant g =500
 
-tcon = [a b g]; % Specify reciprocal of the time constants for simulation
+tcon = [a b]; % Specify reciprocal of the time constants for simulation
 
 Con = 135; % Connectivity constant, used to specify connectivty between neuronal types
 
-C= [Con; 0.8*Con; 0.25*Con; 0.25*Con; 0.3*Con; 0.1*Con; 0.8*Con]; % Connectivity Constants for all populations
+C= [Con; 0.8*Con; 0.25*Con; 0.25*Con]; % Connectivity Constants for all populations
 
 for q = 1:Simulation_number
     
@@ -94,7 +91,7 @@ for q = 1:Simulation_number
     end
     if simulate
         SimulationSettings.fs = fs;
-        Jansen_Simulation(SimulationSettings); % Simulate states and output of the extended neural mass model
+        Wendling_Simulation(SimulationSettings); % Simulate states and output of the extended neural mass model
     end
     load([SimulationSettings.name,'.mat']);% Load parameters from simulation
     % output8 contains the simulated
@@ -141,7 +138,7 @@ for q = 1:Simulation_number
                 break
             end
             %
-            gain = [Sigma(Ds+Dk+1,:,p); Sigma(Ds+Dk+2,:,p); Sigma(Ds+Dk+3,:,p)];
+            gain = [Sigma(Ds+Dk+1,:,p); Sigma(Ds+Dk+2,:,p)];
             
             if Dk ==1
                 %                     if (LimitEst ==1)
@@ -153,7 +150,7 @@ for q = 1:Simulation_number
             else
                 Input_var = Input_mean;
             end
-            [Xout(:,:,p) Yout(:,:,p)] = WNM(Sigma(:,:,p),dt,Input_var, gain, tcon,C);
+            [Xout(:,:,p) Yout(:,:,p)] = JNM(Sigma(:,:,p),dt,Input_var, gain, tcon,C);
             [ExpX(:,p) ExpY(:,p) Pxxn Pxyn Pyyn] = Expectation(Xout(:,:,p), Dx, Yout(:,:,p), 1,kappa);
             
             Pyyn = Pyyn +R;
@@ -202,7 +199,7 @@ for q = 1:Simulation_number
             
         end
         
-       conditionT1 = ((X(Ds+Dk+1,end) <0) || (X(Ds+Dk+2,end) <0) || (X(Ds+Dk+3,end) <0));
+       conditionT1 = ((X(Ds+Dk+1,end) <0) || (X(Ds+Dk+2,end) <0));
 
         
         condition = conditionT && conditionT1;
